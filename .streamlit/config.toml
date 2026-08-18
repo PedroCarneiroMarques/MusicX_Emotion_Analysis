@@ -4,3 +4,9 @@ backgroundColor = "#F7FAFC"
 secondaryBackgroundColor = "#E8F1F8"
 textColor = "#1B2838"
 font = "sans serif"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false

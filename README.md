@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![pandas](https://img.shields.io/badge/pandas-EDA-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-baselines-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-app-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-app-FF4B4B?logo=streamlit&logoColor=white)](https://share.streamlit.io/deploy?repository=PedroCarneiroMarques/MusicX_Emotion_Analysis&branch=main&mainModule=app.py)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 <p align="center">
@@ -13,6 +13,8 @@
 Survey analysis of **736** listeners: how often they play 16 genres, and how they rate anxiety, depression, insomnia, and OCD on a 0–10 scale.
 
 The interesting result is not a high R² — it is that **listening habits barely predict symptom scores**, while **three in four people still say music helps**.
+
+**Live dashboard (2 minutes):** [Deploy on Streamlit Community Cloud](https://share.streamlit.io/deploy?repository=PedroCarneiroMarques/MusicX_Emotion_Analysis&branch=main&mainModule=app.py) — sign in with GitHub, confirm `app.py` on `main`, click Deploy. You get a public `*.streamlit.app` URL for the README and LinkedIn.
 
 ---
 
@@ -48,9 +50,10 @@ Full walkthrough: [`analysis.ipynb`](analysis.ipynb).
 ## Repository layout
 
 ```
-app.py                 Streamlit explorer (overview, listeners, associations, models)
+app.py                 Interactive Streamlit dashboard (filters, chart builder, compare)
 analysis.ipynb         Narrative analysis — quality → EDA → leakage demo → honest models
 src/data.py            Load, clean, ordinal-encode frequencies
+src/viz.py             Plotly theme for the dashboard
 data/mxmh_survey.csv   MxMH public survey (see data/README.md)
 tests/test_data.py     Cleaning contracts (no Age=0, BPM outlier, encoding)
 ```
