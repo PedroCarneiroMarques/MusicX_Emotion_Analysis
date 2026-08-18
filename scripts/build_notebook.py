@@ -16,7 +16,7 @@ CELLS: list[tuple[str, str]] = [
 
 **Question.** Do listening habits help explain self-reported anxiety, depression, insomnia, and OCD? And how often do people say that music itself helps?
 
-**Answer in one paragraph.** In this survey of 736 listeners, **74.5%** say music improves their mental health. Genre frequencies only weakly track the 0–10 symptom scores (largest Pearson *r* ≈ 0.19). A random forest on genres + age + hours **does not beat** a mean baseline. A model that *looks* perfect is often predicting the *sum of its own features*.
+**Answer in one paragraph.** In this survey of 736 listeners, **74.5%** say music improves their mental health. Genre frequencies only weakly track the 0–10 symptom scores (largest Pearson *r* ≈ 0.19). An L2 logistic regression that tries to predict “Improve vs not” from listening habits sits near chance. A model that *looks* perfect is often predicting the *sum of its own features*.
 """,
     ),
     (
@@ -35,8 +35,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.dummy import DummyRegressor
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
@@ -54,6 +52,7 @@ from src.data import (
     genre_label,
     load_raw,
 )
+from src.model import fit_improve_model
 
 sns.set_theme(style="whitegrid", palette="muted")
 plt.rcParams["figure.figsize"] = (8, 4.5)
@@ -292,68 +291,44 @@ print("  test R²     :", r2_score(y_test, pred))
     (
         "markdown",
         """That MSE is numerically zero. It is not a win. The model learned `y = x1 + x2 + x3 + x4` because that is how `y` was built.
-
-Mental-health columns were also in the original feature list; they got coefficients of ~0 because they were irrelevant to a sum of frequencies. Feature importance in the random forest then “proved” that the genre columns mattered — of course they did: they *were* the target.
 """,
     ),
     (
         "markdown",
-        """## 6 · Honest model: predict a symptom score
+        """## 6 · Honest model: logistic regression on “does music help?”
 
-Features: 16 encoded genres + hours per day + age. Target: one of the 0–10 scores. Baseline: always predict the training-set mean (`DummyRegressor`). If the forest cannot beat that, listening habits are not a useful predictor in this sample.
+The survey's own music × mental-health question is `Music effects`. Worsen has 17 rows, so three-class classification is theatre. The target is **Improve vs not**.
+
+**Why logistic regression.** n ≈ 700, 16 correlated genre frequencies, and we need *signed* coefficients. A random forest would overfit the noise and hide whether a genre pushes the log-odds up or down. Features are standardised so each coefficient is “per one standard deviation”.
 """,
     ),
     (
         "code",
-        """def evaluate_target(frame: pd.DataFrame, target: str) -> dict:
-    work = frame.dropna(subset=["Age", target]).copy()
-    feats = freq_cols + ["Hours per day", "Age"]
-    x_train, x_test, y_train, y_test = train_test_split(
-        work[feats], work[target], test_size=0.2, random_state=42
-    )
-    rf = RandomForestRegressor(n_estimators=300, random_state=42, n_jobs=-1)
-    rf.fit(x_train, y_train)
-    pred = rf.predict(x_test)
-    dummy = DummyRegressor(strategy="mean").fit(x_train, y_train)
-    base = dummy.predict(x_test)
-    return {
-        "target": target,
-        "n": len(work),
-        "rf_r2": r2_score(y_test, pred),
-        "rf_mse": mean_squared_error(y_test, pred),
-        "base_r2": r2_score(y_test, base),
-        "base_mse": mean_squared_error(y_test, base),
-        "importance": pd.Series(rf.feature_importances_, index=feats),
-    }
-
-
-rows = [evaluate_target(df, t) for t in MENTAL_HEALTH_COLS]
-results = pd.DataFrame(rows)[["target", "n", "rf_r2", "base_r2", "rf_mse", "base_mse"]]
-print(results.round(3).to_string(index=False))
+        """result = fit_improve_model(df)
+print(f"n={result['n']}  test={result['n_test']}")
+print(f"Improve base rate: {result['base_rate']:.1%}")
+print(f"Logistic  AUC={result['auc']:.3f}  accuracy={result['accuracy']:.1%}")
+print(f"Always-Improve  AUC={result['dummy_auc']:.3f}  accuracy={result['dummy_accuracy']:.1%}")
+print()
+print(result["coefficients"].round(3).to_string(index=False))
 """,
     ),
     (
         "code",
-        """dep = next(r for r in rows if r["target"] == "Depression")
-imp = (
-    dep["importance"]
-    .rename(index=lambda c: genre_label(c) if c.startswith("Frequency") else c)
-    .sort_values(ascending=False)
-    .head(8)
-)
-fig, ax = plt.subplots(figsize=(8, 4.5))
-sns.barplot(x=imp.values, y=imp.index, color="#3D5A80", ax=ax)
-ax.set_xlabel("Gini importance")
-ax.set_title("Random forest — predicting Depression")
+        """coef = result["coefficients"]
+fig, ax = plt.subplots(figsize=(8, 6.5))
+colors = ["#EE6C4D" if v < 0 else "#3D5A80" for v in coef["log_odds"]]
+ax.barh(coef["feature"], coef["log_odds"], color=colors, height=0.65)
+ax.axvline(0, color="#1B2838", linewidth=0.8)
+ax.set_xlabel("Log-odds per 1 SD")
+ax.set_title("Logistic regression — Improve vs not")
 fig.tight_layout()
 plt.show()
 """,
     ),
     (
         "markdown",
-        """Age and hours dominate importance because they are the only continuous demographics in the feature set — not because they explain depression well. Test R² stays at or below the dummy baseline. **Do not ship this as a predictor.**
-
-A classifier for “Improve vs not” has the same problem from the other side: the majority class is already 74.5%. Accuracy near that number is the base rate, not skill.
+        """If AUC sits near 0.5, listening habits do not rank “Improve” above “not” better than chance. Accuracy near the 74.5% base rate is the majority class, not skill. **Do not ship this as a predictor.**
 """,
     ),
     (

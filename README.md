@@ -28,7 +28,7 @@ The interesting result is not a high R² — it is that **listening habits barel
 | The “worsen” group is small and darker | Those 17 people average Depression **7.2** vs **4.9** among people who say music improves things. Flag, not a prevalence rate. |
 | The sample is not “the public” | Median age **21**, **62%** Spotify, survey spread on forums in late 2022. |
 
-A random forest trained on 16 genre frequencies + age + hours **does not beat** predicting the training-set mean for anxiety, depression, or insomnia (test R² is slightly *worse* than a dummy regressor). Weak signal is the finding.
+An **L2 logistic regression** that predicts Improve vs not from 16 genres + age + hours sits near chance (compare ROC-AUC to 0.5, and accuracy to the 74.5% base rate). Weak signal is the finding.
 
 ---
 

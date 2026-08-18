@@ -20,9 +20,23 @@ LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
     font=dict(color=INK, size=13),
-    margin=dict(l=16, r=16, t=56, b=16),
+    margin=dict(l=80, r=56, t=80, b=88),
     hoverlabel=dict(bgcolor="white", font_size=12),
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
+    legend=dict(
+        orientation="h",
+        yanchor="top",
+        y=-0.22,
+        x=0,
+        xanchor="left",
+        bgcolor="rgba(0,0,0,0)",
+        tracegroupgap=12,
+        itemwidth=80,
+    ),
+    bargap=0.32,
+    bargroupgap=0.18,
+    boxgap=0.4,
+    boxgroupgap=0.22,
+    violinmode="group",
 )
 
 PLOTLY_CONFIG = {
@@ -32,14 +46,39 @@ PLOTLY_CONFIG = {
 }
 
 
-def style(fig: go.Figure, height: int = 420) -> go.Figure:
+def why(text: str) -> None:
+    """One-line rationale under a chart."""
+    st.caption(f"**Why this chart.** {text}")
+
+
+def height_for_bars(n: int, row_px: int = 32, extra: int = 160) -> int:
+    return int(min(920, max(380, n * row_px + extra)))
+
+
+def style(fig: go.Figure, height: int = 480) -> go.Figure:
     fig.update_layout(**LAYOUT, height=height)
-    fig.update_xaxes(showgrid=True, gridcolor="rgba(61,90,128,0.12)", zeroline=False)
-    fig.update_yaxes(showgrid=True, gridcolor="rgba(61,90,128,0.12)", zeroline=False)
+    fig.update_xaxes(
+        showgrid=True,
+        gridcolor="rgba(61,90,128,0.10)",
+        zeroline=False,
+        automargin=True,
+        title_standoff=18,
+        ticks="outside",
+        ticklen=6,
+    )
+    fig.update_yaxes(
+        showgrid=True,
+        gridcolor="rgba(61,90,128,0.10)",
+        zeroline=False,
+        automargin=True,
+        title_standoff=18,
+        ticks="outside",
+        ticklen=6,
+    )
     return fig
 
 
-def draw(fig: go.Figure, *, height: int = 420, key: str | None = None, **kwargs):
+def draw(fig: go.Figure, *, height: int = 480, key: str | None = None, **kwargs):
     """Render a Plotly figure at full width."""
     style(fig, height=height)
     return st.plotly_chart(
