@@ -1,4 +1,4 @@
-"""Build analysis.ipynb — narrative notebook for the MusicX rewrite."""
+"""Build analysis.ipynb — narrative notebook for MusicX."""
 
 from __future__ import annotations
 
@@ -14,11 +14,9 @@ CELLS: list[tuple[str, str]] = [
         "markdown",
         """# MusicX — music habits and self-reported mental health
 
-Ironhack Data Analytics final project (December 2023), rewritten in 2026.
-
 **Question.** Do listening habits help explain self-reported anxiety, depression, insomnia, and OCD? And how often do people say that music itself helps?
 
-**Answer in one paragraph.** In this survey of 736 listeners, **74.5%** say music improves their mental health. Genre frequencies only weakly track the 0–10 symptom scores (largest Pearson *r* ≈ 0.19). A random forest on genres + age + hours **does not beat** a mean baseline. The 2023 notebook looked accurate because it predicted the *sum of its own features*.
+**Answer in one paragraph.** In this survey of 736 listeners, **74.5%** say music improves their mental health. Genre frequencies only weakly track the 0–10 symptom scores (largest Pearson *r* ≈ 0.19). A random forest on genres + age + hours **does not beat** a mean baseline. A model that *looks* perfect is often predicting the *sum of its own features*.
 """,
     ),
     (
@@ -262,7 +260,7 @@ plt.show()
     ),
     (
         "markdown",
-        """## 5 · The 2023 target (leakage)
+        """## 5 · The leaked target
 
 `TotalMusicFreq` was the sum of four encoded genre columns. Those four columns were then used to predict the sum. Linear regression should — and does — recover a coefficient of 1 for each of them.
 """,
@@ -367,7 +365,7 @@ A classifier for “Improve vs not” has the same problem from the other side: 
 - Most respondents in this survey *say* music helps.
 - Symptom scores are internally coherent (anxiety–depression *r* = 0.52).
 - Genre–symptom correlations exist and are small.
-- The leaked 2023 target was not a mental-health model.
+- The leaked target (`TotalMusicFreq` as a sum of its own features) was not a mental-health model.
 
 **Cannot claim**
 

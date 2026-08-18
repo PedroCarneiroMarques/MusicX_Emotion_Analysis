@@ -87,8 +87,7 @@ def page_overview(df: pd.DataFrame) -> None:
 
     st.title("Music habits and self-reported mental health")
     st.caption(
-        "MxMH survey · 736 respondents · Aug–Nov 2022 · "
-        "rewritten from an Ironhack final project (Dec 2023)"
+        "MxMH survey · 736 respondents · collected Aug–Nov 2022"
     )
 
     effects = df["Music effects"].dropna()

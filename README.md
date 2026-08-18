@@ -12,7 +12,7 @@
 
 Survey analysis of **736** listeners: how often they play 16 genres, and how they rate anxiety, depression, insomnia, and OCD on a 0–10 scale.
 
-This started as my Ironhack Data Analytics final project (December 2023). The 2026 rewrite keeps the question and throws out the broken model. The interesting result is not a high R² — it is that **listening habits barely predict symptom scores**, while **three in four people still say music helps**.
+The interesting result is not a high R² — it is that **listening habits barely predict symptom scores**, while **three in four people still say music helps**.
 
 ---
 
@@ -30,11 +30,11 @@ A random forest trained on 16 genre frequencies + age + hours **does not beat** 
 
 ---
 
-## What was wrong in the 2023 notebook
+## What was wrong with the leaked target
 
 The original target `TotalMusicFreq` was the **sum of four genre-frequency columns**. Those same columns were then used as features. Linear regression recovered coefficients `[1, 1, 1, 1]` and an MSE of ~`10⁻²⁹`. That is data leakage: the model was adding four numbers it had already been given.
 
-The rewrite:
+This analysis instead:
 
 1. Stops filling missing Age / BPM / Music effects with `0` (that invented a 0-year-old and a fake “Never”).
 2. Treats `BPM = 999,999,999` as an invalid tempo, not a real value.
@@ -59,17 +59,21 @@ tests/test_data.py     Cleaning contracts (no Age=0, BPM outlier, encoding)
 
 ## Run it
 
-Python 3.10+ recommended.
+Clone the repo (or `cd` into the folder that already contains `app.py`). Python 3.10+.
 
 ```bash
-python -m venv .venv
+git clone https://github.com/PedroCarneiroMarques/MusicX_Emotion_Analysis.git
+cd MusicX_Emotion_Analysis
+
+python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 streamlit run app.py               # dashboard
 pytest                             # cleaning tests
-jupyter notebook analysis.ipynb    # analysis
 ```
+
+If `streamlit` says `File does not exist: app.py`, you are in the wrong directory. `ls` should show `app.py`, `analysis.ipynb`, and `data/`.
 
 The dashboard does not need an API key. Everything runs on the CSV in `data/`.
 
