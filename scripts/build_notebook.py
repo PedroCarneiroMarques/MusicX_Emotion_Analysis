@@ -66,7 +66,7 @@ plt.rcParams["axes.titlesize"] = 13
 
 Source: [MxMH survey on Kaggle](https://www.kaggle.com/datasets/catherinerasgaitis/mxmh-survey-results) (Catherine Rasgaitis, Aug–Nov 2022). 736 rows, 33 columns. Genre listening is ordinal text; symptoms are 0–10 self-ratings.
 
-The original notebook ran `fillna(0)` on the whole frame. That turns a missing age into a newborn and a missing “Music effects” answer into the number 0. We keep missing as missing.
+Filling every missing cell with `0` turns a missing age into a newborn and a missing “Music effects” answer into the number 0. This analysis keeps missing as missing.
 """,
     ),
     (

@@ -103,7 +103,7 @@ def page_overview(df: pd.DataFrame) -> None:
         Three in four respondents say music **improves** their mental health.
         Genre preferences, though, only weakly track the 0–10 symptom scores
         (anxiety, depression, insomnia, OCD). A model that *looks* accurate
-        in the original notebook was predicting the sum of its own inputs.
+        is sometimes just predicting the sum of its own inputs.
 
         Use the sidebar to explore the sample, the associations, and the
         corrected models. The write-up lives in [`analysis.ipynb`](analysis.ipynb).
@@ -281,9 +281,9 @@ def page_modeling(df: pd.DataFrame) -> None:
     st.title("What a model can (and cannot) do here")
     st.markdown(
         """
-        The original notebook created `TotalMusicFreq` as the **sum of four
-        genre-frequency columns**, then used those same columns to predict
-        the sum. Linear regression recovered coefficients of `1, 1, 1, 1`
+        If you build a target `TotalMusicFreq` as the **sum of four
+        genre-frequency columns**, then use those same columns to predict
+        the sum, linear regression recovers coefficients of `1, 1, 1, 1`
         and an MSE of ~0. That is leakage, not insight.
 
         The honest question is the one the project title promised:

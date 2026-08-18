@@ -32,7 +32,7 @@ A random forest trained on 16 genre frequencies + age + hours **does not beat** 
 
 ## What was wrong with the leaked target
 
-The original target `TotalMusicFreq` was the **sum of four genre-frequency columns**. Those same columns were then used as features. Linear regression recovered coefficients `[1, 1, 1, 1]` and an MSE of ~`10⁻²⁹`. That is data leakage: the model was adding four numbers it had already been given.
+A leaked target `TotalMusicFreq` was the **sum of four genre-frequency columns**. Those same columns were then used as features. Linear regression recovered coefficients `[1, 1, 1, 1]` and an MSE of ~`10⁻²⁹`. That is data leakage: the model was adding four numbers it had already been given.
 
 This analysis instead:
 
