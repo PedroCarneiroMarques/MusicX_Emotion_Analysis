@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -89,7 +90,7 @@ def clean_survey(df: pd.DataFrame) -> pd.DataFrame:
 
     for col in CATEGORICAL_COLS:
         if col in out.columns:
-            out[col] = out[col].replace({"": pd.NA, 0: pd.NA})
+            out[col] = out[col].replace({"": np.nan, 0: np.nan})
 
     return out
 

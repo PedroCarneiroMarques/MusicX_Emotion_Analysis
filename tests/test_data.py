@@ -68,3 +68,10 @@ def test_permissions_column_is_dropped() -> None:
     df = load_clean()
     assert "Permissions" not in df.columns
     assert isinstance(df, pd.DataFrame)
+
+
+def test_missing_values_are_not_pandas_na_type() -> None:
+    """Plotly/orjson cannot serialise pandas.NA — missing must be numpy NaN."""
+    df = load_clean()
+    for col in df.columns:
+        assert not df[col].map(lambda x: type(x).__name__ == "NAType").any(), col

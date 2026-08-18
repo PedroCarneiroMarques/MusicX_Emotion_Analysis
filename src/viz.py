@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
@@ -44,6 +46,19 @@ PLOTLY_CONFIG = {
     "responsive": True,
     "modeBarButtonsToRemove": ["sendDataToCloud"],
 }
+
+
+def for_plotly(df: pd.DataFrame) -> pd.DataFrame:
+    """Replace pandas NAType with JSON-safe nulls so Plotly/orjson can serialise."""
+    out = df.copy()
+    out = out.replace({pd.NA: np.nan})
+    for col in out.columns:
+        dtype = str(out[col].dtype)
+        if dtype == "string" or dtype.startswith("str"):
+            out[col] = out[col].astype(object)
+        if out[col].dtype == object:
+            out[col] = out[col].where(out[col].notna(), None)
+    return out
 
 
 def why(text: str) -> None:

@@ -22,6 +22,7 @@ from src.viz import (
     empty_state,
     height_for_bars,
     why,
+    for_plotly,
 )
 
 BANNER = Path(__file__).resolve().parent / "assets" / "banner.png"
@@ -79,9 +80,7 @@ def get_data() -> pd.DataFrame:
     df["Primary streaming service"] = df["Primary streaming service"].fillna(
         "Not reported"
     )
-    df["Music effects"] = df["Music effects"].astype("string")
-    df["Fav genre"] = df["Fav genre"].astype("string")
-    return df
+    return for_plotly(df)
 
 
 @st.cache_data
@@ -181,7 +180,7 @@ def sidebar_filters(df: pd.DataFrame) -> pd.DataFrame:
         f"**{len(out):,}** / {len(df):,} respondents "
         f"({len(out) / max(len(df), 1):.0%})"
     )
-    return out
+    return for_plotly(out)
 
 
 def kpi_row(filtered: pd.DataFrame, full: pd.DataFrame) -> None:
@@ -424,7 +423,7 @@ def page_builder(filtered: pd.DataFrame) -> None:
     trend = extra2.toggle("Trendline (OLS)", value=False)
     bins = extra3.slider("Histogram bins", 8, 40, 20)
 
-    work = filtered.copy()
+    work = for_plotly(filtered)
     hover = ["Fav genre", "Music effects", "Age", "Hours per day"]
     hover = [c for c in hover if c in work.columns]
 
